@@ -1,9 +1,10 @@
+// src/App.jsx
 import { useState } from "react";
 import {
   useCreateTodoMutation,
   useDeleteTodoMutation,
   useGetTodosQuery,
-  useUpdateTodoMutation
+  useUpdateTodoMutation,
 } from "./store/todoApi";
 
 const App = () => {
@@ -11,24 +12,27 @@ const App = () => {
   const [img, setImg] = useState("");
   const [editId, setEditId] = useState(null);
 
-  const { data, refetch } = useGetTodosQuery();
+  const { data, refetch, isLoading } = useGetTodosQuery();
   const [addTodo] = useCreateTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
   const [updateTodo] = useUpdateTodoMutation();
 
   const handleSubmit = async () => {
     try {
+      if (!title.trim()) return;
+
       if (editId) {
         await updateTodo({ id: editId, title, img }).unwrap();
         setEditId(null);
       } else {
         await addTodo({ title, img }).unwrap();
       }
+
       setTitle("");
       setImg("");
       refetch();
     } catch (err) {
-      console.log("Xəta:", err);
+      console.error("Xəta:", err);
     }
   };
 
@@ -37,7 +41,7 @@ const App = () => {
       await deleteTodo(id).unwrap();
       refetch();
     } catch (err) {
-      console.log("Silinmə xətası:", err);
+      console.error("Silinmə xətası:", err);
     }
   };
 
@@ -47,7 +51,6 @@ const App = () => {
     setEditId(todo.id);
   };
 
-  // Təhlükəsiz array
   const todos = Array.isArray(data) ? data : [];
 
   return (
@@ -75,28 +78,34 @@ const App = () => {
         {editId ? "Yenilə" : "Əlavə et"}
       </button>
 
-      <ul className="space-y-4">
-        {todos.map((item) => (
-          <li key={item.id} className="border p-4 rounded">
-            <h3 className="font-semibold">{item.title}</h3>
-            {item.img && <img src={item.img} alt="" className="w-24 mt-2" />}
-            <div className="space-x-2 mt-2">
-              <button
-                onClick={() => handleEdit(item)}
-                className="bg-yellow-400 text-white px-3 py-1 rounded"
-              >
-                Redaktə et
-              </button>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="bg-red-600 text-white px-3 py-1 rounded"
-              >
-                Sil
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {isLoading ? (
+        <p>Yüklənir...</p>
+      ) : (
+        <ul className="space-y-4">
+          {todos.map((item) => (
+            <li key={item.id} className="border p-4 rounded">
+              <h3 className="font-semibold">{item.title}</h3>
+              {item.img && (
+                <img src={item.img} alt="" className="w-24 mt-2 object-cover" />
+              )}
+              <div className="space-x-2 mt-2">
+                <button
+                  onClick={() => handleEdit(item)}
+                  className="bg-yellow-400 text-white px-3 py-1 rounded"
+                >
+                  Redaktə et
+                </button>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="bg-red-600 text-white px-3 py-1 rounded"
+                >
+                  Sil
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
