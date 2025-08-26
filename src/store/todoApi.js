@@ -1,4 +1,5 @@
-// src/store/todoApi.js
+// store/todoApi.js
+
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const todoApi = createApi({
@@ -9,6 +10,7 @@ export const todoApi = createApi({
   endpoints: (builder) => ({
     getTodos: builder.query({
       query: () => '/courses',
+      transformResponse: (response) => response.content, // BURADA DƏYİŞİKLİK!
     }),
     createTodo: builder.mutation({
       query: ({ title, img }) => ({
