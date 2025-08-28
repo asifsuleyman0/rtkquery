@@ -7,25 +7,32 @@ import {
 } from "../store/api";
 
 const Courses = () => {
-  const { data = [], isLoading, error } = useGetCoursesQuery();
+  const { data, isLoading, error } = useGetCoursesQuery();
   const [createCourse] = useCreateCourseMutation();
   const [updateCourse] = useUpdateCourseMutation();
   const [deleteCourse] = useDeleteCourseMutation();
 
   const [form, setForm] = useState({ id: null, title: "" });
 
+  // API-dən gələn məlumatları düzgün formatda yoxlayırıq
+  const courses = Array.isArray(data) ? data : (data?.data && Array.isArray(data.data)) ? data.data : [];
+
   const handleSubmit = async () => {
     if (!form.title) return;
-    if (form.id) {
-      await updateCourse(form);
-    } else {
-      await createCourse({ title: form.title });
+    try {
+      if (form.id) {
+        await updateCourse(form);
+      } else {
+        await createCourse({ title: form.title });
+      }
+      setForm({ id: null, title: "" });
+    } catch (err) {
+      console.error("Error submitting form:", err);
     }
-    setForm({ id: null, title: "" });
   };
 
   if (isLoading) return <p>Yüklənir...</p>;
-  if (error) return <p>Xəta baş verdi</p>;
+  if (error) return <p>Xəta baş verdi: {error.message || "API xətası"}</p>;
 
   return (
     <div>
@@ -55,7 +62,7 @@ const Courses = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((c) => (
+          {courses.map((c) => (
             <tr key={c.id}>
               <td className="border p-2">{c.id}</td>
               <td className="border p-2">{c.title}</td>
