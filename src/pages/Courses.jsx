@@ -12,20 +12,20 @@ const Courses = () => {
   const [updateCourse] = useUpdateCourseMutation();
   const [deleteCourse] = useDeleteCourseMutation();
 
-  const [form, setForm] = useState({ id: null, title: "" });
+  const [form, setForm] = useState({ id: null, title: "", description: "" });
 
   // API-dən gələn məlumatları düzgün formatda yoxlayırıq
   const courses = Array.isArray(data) ? data : (data?.data && Array.isArray(data.data)) ? data.data : [];
 
   const handleSubmit = async () => {
-    if (!form.title) return;
+    if (!form.title || !form.description) return;
     try {
       if (form.id) {
         await updateCourse(form);
       } else {
-        await createCourse({ title: form.title });
+        await createCourse({ title: form.title, description: form.description });
       }
-      setForm({ id: null, title: "" });
+      setForm({ id: null, title: "", description: "" });
     } catch (err) {
       console.error("Error submitting form:", err);
     }
@@ -38,19 +38,28 @@ const Courses = () => {
     <div>
       <h1 className="text-2xl font-bold mb-4">Courses</h1>
 
-      <div className="flex space-x-2 mb-4">
-        <input
-          className="border p-2 flex-1"
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
+      <div className="flex flex-col space-y-2 mb-4">
+        <div className="flex space-x-2">
+          <input
+            className="border p-2 flex-1"
+            placeholder="Title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-600 text-white px-4 rounded"
+          >
+            {form.id ? "Update" : "Add"}
+          </button>
+        </div>
+        <textarea
+          className="border p-2 w-full"
+          placeholder="Description"
+          rows="3"
+          value={form.description}
+          onChange={(e) => setForm({ ...form, description: e.target.value })}
         />
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-600 text-white px-4 rounded"
-        >
-          {form.id ? "Update" : "Add"}
-        </button>
       </div>
 
       <table className="w-full border">
@@ -58,6 +67,7 @@ const Courses = () => {
           <tr className="bg-gray-200">
             <th className="border p-2">ID</th>
             <th className="border p-2">Title</th>
+            <th className="border p-2">Description</th>
             <th className="border p-2">Actions</th>
           </tr>
         </thead>
@@ -66,6 +76,11 @@ const Courses = () => {
             <tr key={c.id}>
               <td className="border p-2">{c.id}</td>
               <td className="border p-2">{c.title}</td>
+              <td className="border p-2 max-w-xs">
+                <div className="truncate" title={c.description}>
+                  {c.description}
+                </div>
+              </td>
               <td className="border p-2 space-x-2">
                 <button
                   onClick={() => setForm(c)}
