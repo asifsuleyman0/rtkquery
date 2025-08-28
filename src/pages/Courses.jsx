@@ -7,18 +7,15 @@ import {
 } from "../store/api";
 
 const Courses = () => {
-  const { data, isLoading, error } = useGetCoursesQuery();
+  const { data = [], isLoading, error } = useGetCoursesQuery();
   const [createCourse] = useCreateCourseMutation();
   const [updateCourse] = useUpdateCourseMutation();
   const [deleteCourse] = useDeleteCourseMutation();
 
   const [form, setForm] = useState({ id: null, title: "", description: "" });
 
-  // API-dən gələn məlumatları düzgün formatda yoxlayırıq
-  const courses = Array.isArray(data) ? data : (data?.data && Array.isArray(data.data)) ? data.data : [];
-
   const handleSubmit = async () => {
-    if (!form.title || !form.description) return;
+    if (!form.title) return;
     try {
       if (form.id) {
         await updateCourse(form);
@@ -72,13 +69,13 @@ const Courses = () => {
           </tr>
         </thead>
         <tbody>
-          {courses.map((c) => (
+          {data.map((c) => (
             <tr key={c.id}>
               <td className="border p-2">{c.id}</td>
               <td className="border p-2">{c.title}</td>
               <td className="border p-2 max-w-xs">
                 <div className="truncate" title={c.description}>
-                  {c.description}
+                  {c.description || 'N/A'}
                 </div>
               </td>
               <td className="border p-2 space-x-2">

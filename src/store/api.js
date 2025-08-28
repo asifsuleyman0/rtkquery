@@ -9,6 +9,10 @@ export const api = createApi({
     getCourses: builder.query({
       query: () => "/courses",
       providesTags: ["Course"],
+      transformResponse: (response) => {
+        // API paginated response formatını düzgün parse edir
+        return response.content || response.data || response;
+      }
     }),
     createCourse: builder.mutation({
       query: (body) => ({
@@ -38,6 +42,9 @@ export const api = createApi({
     getTeachers: builder.query({
       query: () => "/teachers",
       providesTags: ["Teacher"],
+      transformResponse: (response) => {
+        return response.content || response.data || response;
+      }
     }),
     createTeacher: builder.mutation({
       query: (body) => ({
@@ -67,6 +74,9 @@ export const api = createApi({
     getUsers: builder.query({
       query: () => "/users",
       providesTags: ["User"],
+      transformResponse: (response) => {
+        return response.content || response.data || response;
+      }
     }),
     createUser: builder.mutation({
       query: (body) => ({
@@ -96,6 +106,9 @@ export const api = createApi({
     getNews: builder.query({
       query: () => "/news",
       providesTags: ["News"],
+      transformResponse: (response) => {
+        return response.content || response.data || response;
+      }
     }),
     createNews: builder.mutation({
       query: (body) => ({
@@ -125,6 +138,9 @@ export const api = createApi({
     getVideos: builder.query({
       query: () => "/videos",
       providesTags: ["Video"],
+      transformResponse: (response) => {
+        return response.content || response.data || response;
+      }
     }),
     createVideo: builder.mutation({
       query: (body) => ({
