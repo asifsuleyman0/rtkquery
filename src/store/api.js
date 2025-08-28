@@ -9,32 +9,18 @@ export const api = createApi({
     getCourses: builder.query({
       query: () => "/courses",
       providesTags: ["Course"],
-      transformResponse: (response) => {
-        // API paginated response formatını düzgün parse edir
-        return response.content || response.data || response;
-      }
+      transformResponse: (response) => response.content || response.data || response,
     }),
     createCourse: builder.mutation({
-      query: (body) => ({
-        url: "/courses",
-        method: "POST",
-        body,
-      }),
+      query: (body) => ({ url: "/courses", method: "POST", body }),
       invalidatesTags: ["Course"],
     }),
     updateCourse: builder.mutation({
-      query: ({ id, ...body }) => ({
-        url: `/courses/${id}`,
-        method: "PUT",
-        body,
-      }),
+      query: ({ id, ...body }) => ({ url: `/courses/${id}`, method: "PUT", body }),
       invalidatesTags: ["Course"],
     }),
     deleteCourse: builder.mutation({
-      query: (id) => ({
-        url: `/courses/${id}`,
-        method: "DELETE",
-      }),
+      query: (id) => ({ url: `/courses/${id}`, method: "DELETE" }),
       invalidatesTags: ["Course"],
     }),
 
@@ -42,31 +28,18 @@ export const api = createApi({
     getTeachers: builder.query({
       query: () => "/teachers",
       providesTags: ["Teacher"],
-      transformResponse: (response) => {
-        return response.content || response.data || response;
-      }
+      transformResponse: (response) => response.content || response.data || response,
     }),
     createTeacher: builder.mutation({
-      query: (body) => ({
-        url: "/teachers",
-        method: "POST",
-        body,
-      }),
+      query: (body) => ({ url: "/teachers", method: "POST", body }),
       invalidatesTags: ["Teacher"],
     }),
     updateTeacher: builder.mutation({
-      query: ({ id, ...body }) => ({
-        url: `/teachers/${id}`,
-        method: "PUT",
-        body,
-      }),
+      query: ({ id, ...body }) => ({ url: `/teachers/${id}`, method: "PUT", body }),
       invalidatesTags: ["Teacher"],
     }),
     deleteTeacher: builder.mutation({
-      query: (id) => ({
-        url: `/teachers/${id}`,
-        method: "DELETE",
-      }),
+      query: (id) => ({ url: `/teachers/${id}`, method: "DELETE" }),
       invalidatesTags: ["Teacher"],
     }),
 
@@ -74,31 +47,18 @@ export const api = createApi({
     getUsers: builder.query({
       query: () => "/users",
       providesTags: ["User"],
-      transformResponse: (response) => {
-        return response.content || response.data || response;
-      }
+      transformResponse: (response) => response.content || response.data || response,
     }),
     createUser: builder.mutation({
-      query: (body) => ({
-        url: "/users",
-        method: "POST",
-        body,
-      }),
+      query: (body) => ({ url: "/users", method: "POST", body }),
       invalidatesTags: ["User"],
     }),
     updateUser: builder.mutation({
-      query: ({ id, ...body }) => ({
-        url: `/users/${id}`,
-        method: "PUT",
-        body,
-      }),
+      query: ({ id, ...body }) => ({ url: `/users/${id}`, method: "PUT", body }),
       invalidatesTags: ["User"],
     }),
     deleteUser: builder.mutation({
-      query: (id) => ({
-        url: `/users/${id}`,
-        method: "DELETE",
-      }),
+      query: (id) => ({ url: `/users/${id}`, method: "DELETE" }),
       invalidatesTags: ["User"],
     }),
 
@@ -106,31 +66,18 @@ export const api = createApi({
     getNews: builder.query({
       query: () => "/news",
       providesTags: ["News"],
-      transformResponse: (response) => {
-        return response.content || response.data || response;
-      }
+      transformResponse: (response) => response.content || response.data || response,
     }),
     createNews: builder.mutation({
-      query: (body) => ({
-        url: "/news",
-        method: "POST",
-        body,
-      }),
+      query: (body) => ({ url: "/news", method: "POST", body }),
       invalidatesTags: ["News"],
     }),
     updateNews: builder.mutation({
-      query: ({ id, ...body }) => ({
-        url: `/news/${id}`,
-        method: "PUT",
-        body,
-      }),
+      query: ({ id, ...body }) => ({ url: `/news/${id}`, method: "PUT", body }),
       invalidatesTags: ["News"],
     }),
     deleteNews: builder.mutation({
-      query: (id) => ({
-        url: `/news/${id}`,
-        method: "DELETE",
-      }),
+      query: (id) => ({ url: `/news/${id}`, method: "DELETE" }),
       invalidatesTags: ["News"],
     }),
 
@@ -138,31 +85,30 @@ export const api = createApi({
     getVideos: builder.query({
       query: () => "/videos",
       providesTags: ["Video"],
-      transformResponse: (response) => {
-        return response.content || response.data || response;
-      }
+      transformResponse: (response) => response.content || response.data || response,
     }),
+
     createVideo: builder.mutation({
-      query: (body) => ({
-        url: "/videos",
-        method: "POST",
-        body,
-      }),
+      query: ({ videoFile, videoDTO }) => {
+        const formData = new FormData();
+        formData.append("video", videoFile);
+        formData.append("videoDTO", JSON.stringify(videoDTO));
+
+        return {
+          url: "/videos/upload",
+          method: "POST",
+          body: formData,
+        };
+      },
       invalidatesTags: ["Video"],
     }),
+
     updateVideo: builder.mutation({
-      query: ({ id, ...body }) => ({
-        url: `/videos/${id}`,
-        method: "PUT",
-        body,
-      }),
+      query: ({ id, ...body }) => ({ url: `/videos/${id}`, method: "PUT", body }),
       invalidatesTags: ["Video"],
     }),
     deleteVideo: builder.mutation({
-      query: (id) => ({
-        url: `/videos/${id}`,
-        method: "DELETE",
-      }),
+      query: (id) => ({ url: `/videos/${id}`, method: "DELETE" }),
       invalidatesTags: ["Video"],
     }),
   }),

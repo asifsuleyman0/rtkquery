@@ -17,12 +17,9 @@ const Videos = () => {
     courseId: "",
     title: "",
     description: "",
-    videoUrl: "",
-    filePath: "",
-    fileSize: "",
+    videoFile: null, // Yeni: fayl üçün
   });
 
-  // Backend-dən gələn data Content Array formatında gəlirsə onu çıxar
   const data = Array.isArray(response) ? response : response?.content || [];
 
   const handleSubmit = async () => {
@@ -31,29 +28,29 @@ const Videos = () => {
       return;
     }
 
-    const videoData = {
-      course: { id: form.courseId },
+    const videoDTO = {
+      courseId: form.courseId,
       title: form.title,
       description: form.description || "",
-      videoUrl: form.videoUrl || "",
-      filePath: form.filePath || "",
-      fileSize: form.fileSize || null,
     };
 
     try {
       if (form.id) {
-        await updateVideo({ id: form.id, ...videoData });
+        await updateVideo({ id: form.id, ...videoDTO });
       } else {
-        await createVideo(videoData);
+        if (!form.videoFile) {
+          alert("Fayl seçilməyib!");
+          return;
+        }
+        await createVideo({ videoFile: form.videoFile, videoDTO });
       }
+
       setForm({
         id: null,
         courseId: "",
         title: "",
         description: "",
-        videoUrl: "",
-        filePath: "",
-        fileSize: "",
+        videoFile: null,
       });
     } catch (err) {
       console.error("Error submitting form:", err);
@@ -88,22 +85,9 @@ const Videos = () => {
           onChange={(e) => setForm({ ...form, description: e.target.value })}
         />
         <input
+          type="file"
           className="border p-2 rounded"
-          placeholder="Video URL"
-          value={form.videoUrl}
-          onChange={(e) => setForm({ ...form, videoUrl: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="File Path"
-          value={form.filePath}
-          onChange={(e) => setForm({ ...form, filePath: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="File Size"
-          value={form.fileSize}
-          onChange={(e) => setForm({ ...form, fileSize: e.target.value })}
+          onChange={(e) => setForm({ ...form, videoFile: e.target.files[0] })}
         />
       </div>
 
@@ -141,9 +125,7 @@ const Videos = () => {
                           courseId: v.course?.id || "",
                           title: v.title,
                           description: v.description,
-                          videoUrl: v.videoUrl,
-                          filePath: v.filePath,
-                          fileSize: v.fileSize,
+                          videoFile: null,
                         })
                       }
                       className="bg-yellow-500 text-white px-2 py-1 rounded"
