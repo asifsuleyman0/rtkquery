@@ -14,43 +14,37 @@ const Teachers = () => {
 
   const [form, setForm] = useState({ 
     id: null, 
-    first_name: "", 
-    last_name: "",
+    firstName: "", 
+    lastName: "",
     bio: "",
-    photo_url: ""
+    photoUrl: ""
   });
 
   // API cavabını debug etmək üçün
   console.log("API Response:", data);
   console.log("Is Array:", Array.isArray(data));
-  console.log("Data keys:", data ? Object.keys(data) : "No data");
 
-  // API-dən gələn məlumatları düzgün formatda yoxlayırıq
   let teachers = [];
   if (Array.isArray(data)) {
     teachers = data;
   } else if (data?.content && Array.isArray(data.content)) {
     teachers = data.content;
-  } else if (data?.data && Array.isArray(data.data)) {
-    teachers = data.data;
-  } else if (data?.teachers && Array.isArray(data.teachers)) {
-    teachers = data.teachers;
   }
 
   console.log("Processed teachers:", teachers);
 
   const handleSubmit = async () => {
-    if (!form.first_name || !form.last_name) {
+    if (!form.firstName || !form.lastName) {
       alert("Ad və soyad mütləqdir!");
       return;
     }
     
     try {
       const teacherData = {
-        first_name: form.first_name,
-        last_name: form.last_name,
+        firstName: form.firstName,
+        lastName: form.lastName,
         bio: form.bio || "",
-        photo_url: form.photo_url || ""
+        photoUrl: form.photoUrl || ""
       };
 
       if (form.id) {
@@ -58,7 +52,8 @@ const Teachers = () => {
       } else {
         await createTeacher(teacherData);
       }
-      setForm({ id: null, first_name: "", last_name: "", bio: "", photo_url: "" });
+
+      setForm({ id: null, firstName: "", lastName: "", bio: "", photoUrl: "" });
     } catch (err) {
       console.error("Error submitting form:", err);
       alert("Xəta baş verdi: " + (err?.data?.message || err.message));
@@ -68,10 +63,10 @@ const Teachers = () => {
   const handleEdit = (teacher) => {
     setForm({
       id: teacher.id,
-      first_name: teacher.first_name || "",
-      last_name: teacher.last_name || "",
+      firstName: teacher.firstName || "",
+      lastName: teacher.lastName || "",
       bio: teacher.bio || "",
-      photo_url: teacher.photo_url || ""
+      photoUrl: teacher.photoUrl || ""
     });
   };
 
@@ -102,27 +97,18 @@ const Teachers = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Müəllimlər</h1>
 
-      {/* Debug məlumatı */}
-      <div className="bg-gray-100 p-2 mb-4 text-sm">
-        <strong>Debug info:</strong>
-        <br />API Response type: {typeof data}
-        <br />Is Array: {Array.isArray(data) ? "Yes" : "No"}
-        <br />Teachers found: {teachers.length}
-        <br />Raw data: {JSON.stringify(data, null, 2).substring(0, 200)}...
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <input
           className="border p-2 rounded"
           placeholder="Ad"
-          value={form.first_name}
-          onChange={(e) => setForm({ ...form, first_name: e.target.value })}
+          value={form.firstName}
+          onChange={(e) => setForm({ ...form, firstName: e.target.value })}
         />
         <input
           className="border p-2 rounded"
           placeholder="Soyad"
-          value={form.last_name}
-          onChange={(e) => setForm({ ...form, last_name: e.target.value })}
+          value={form.lastName}
+          onChange={(e) => setForm({ ...form, lastName: e.target.value })}
         />
         <input
           className="border p-2 rounded"
@@ -133,8 +119,8 @@ const Teachers = () => {
         <input
           className="border p-2 rounded"
           placeholder="Şəkil URL"
-          value={form.photo_url}
-          onChange={(e) => setForm({ ...form, photo_url: e.target.value })}
+          value={form.photoUrl}
+          onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
         />
       </div>
 
@@ -162,13 +148,13 @@ const Teachers = () => {
               {teachers.map((teacher) => (
                 <tr key={teacher.id} className="hover:bg-gray-50">
                   <td className="border p-2">{teacher.id}</td>
-                  <td className="border p-2">{teacher.first_name}</td>
-                  <td className="border p-2">{teacher.last_name}</td>
+                  <td className="border p-2">{teacher.firstName}</td>
+                  <td className="border p-2">{teacher.lastName}</td>
                   <td className="border p-2 max-w-xs truncate">{teacher.bio}</td>
                   <td className="border p-2">
-                    {teacher.photo_url && (
+                    {teacher.photoUrl && (
                       <img 
-                        src={teacher.photo_url} 
+                        src={teacher.photoUrl} 
                         alt="Teacher" 
                         className="w-10 h-10 rounded-full object-cover"
                         onError={(e) => {e.target.style.display = 'none'}}
