@@ -17,23 +17,19 @@ const Users = () => {
           <table className="w-full border border-gray-300 rounded">
             <thead>
               <tr className="bg-gray-200">
-                <th className="border p-2">ID</th>
                 <th className="border p-2">First Name</th>
                 <th className="border p-2">Last Name</th>
                 <th className="border p-2">Email</th>
                 <th className="border p-2">Phone</th>
-                <th className="border p-2">Role</th>
               </tr>
             </thead>
             <tbody>
               {data.map((u) => (
                 <tr key={u.id} className="hover:bg-gray-50">
-                  <td className="border p-2">{u.id}</td>
                   <td className="border p-2">{u.firstName}</td>
                   <td className="border p-2">{u.lastName}</td>
                   <td className="border p-2">{u.email}</td>
                   <td className="border p-2">{u.phone}</td>
-                  <td className="border p-2">{u.role}</td>
                 </tr>
               ))}
             </tbody>
