@@ -118,6 +118,12 @@ const Teachers = () => {
         />
         <input
           className="border p-2 rounded"
+          placeholder="Linkedin"
+          value={form.linkedinUrl}
+          onChange={(e) => setForm({ ...form, linkedinUrl: e.target.value })}
+        />
+        <input
+          className="border p-2 rounded"
           placeholder="Şəkil URL"
           value={form.photoUrl}
           onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
