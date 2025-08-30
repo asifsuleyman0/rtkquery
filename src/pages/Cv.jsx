@@ -12,7 +12,7 @@ const Cv = () => {
       const res = await fetch(`https://digacc-5.onrender.com/api/contact-forms/${id}/cv`);
       if (!res.ok) throw new Error("CV download failed");
       const blob = await res.blob();
-      saveAs(blob, filename); // file-saver istifadə olunur
+      saveAs(blob, filename); 
     } catch (err) {
       console.error(err);
       alert("CV yüklənmədi!");
