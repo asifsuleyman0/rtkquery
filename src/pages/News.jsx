@@ -92,7 +92,6 @@ const News = () => {
         <table className="w-full border border-gray-300 rounded">
           <thead>
             <tr className="bg-gray-200">
-              <th className="border p-2">ID</th>
               <th className="border p-2">Title</th>
               <th className="border p-2">Description</th>
               <th className="border p-2">Image</th>
@@ -103,7 +102,6 @@ const News = () => {
           <tbody>
             {data.map((n) => (
               <tr key={n.id} className="hover:bg-gray-50">
-                <td className="border p-2">{n.id}</td>
                 <td className="border p-2">{n.title}</td>
                 <td className="border p-2">{n.description}</td>
                 <td className="border p-2">

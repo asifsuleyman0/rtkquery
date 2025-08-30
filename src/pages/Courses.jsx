@@ -37,16 +37,8 @@ const Courses = () => {
 
       <div className="flex flex-col space-y-2 mb-4">
         <div className="flex space-x-2">
-          <input
-            className="border p-2 flex-1"
-            placeholder="Title"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-          />
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-600 text-white px-4 rounded"
-          >
+          <input className="border p-2 flex-1" placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}/>
+          <button onClick={handleSubmit} className="bg-blue-600 text-white px-4 rounded">
             {form.id ? "Update" : "Add"}
           </button>
         </div>
@@ -62,33 +54,27 @@ const Courses = () => {
       <table className="w-full border">
         <thead>
           <tr className="bg-gray-200">
-            <th className="border p-2">ID</th>
             <th className="border p-2">Title</th>
             <th className="border p-2">Description</th>
+            <th className="border p-2">ImageUrl</th>
             <th className="border p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
           {data.map((c) => (
             <tr key={c.id}>
-              <td className="border p-2">{c.id}</td>
               <td className="border p-2">{c.title}</td>
+              <td className="border p-2">{c.imageUrl}</td>
               <td className="border p-2 max-w-xs">
                 <div className="truncate" title={c.description}>
                   {c.description || 'N/A'}
                 </div>
               </td>
               <td className="border p-2 space-x-2">
-                <button
-                  onClick={() => setForm(c)}
-                  className="bg-yellow-500 text-white px-2 py-1 rounded"
-                >
+                <button onClick={() => setForm(c)} className="bg-yellow-500 text-white px-2 py-1 rounded">
                   Edit
                 </button>
-                <button
-                  onClick={() => deleteCourse(c.id)}
-                  className="bg-red-600 text-white px-2 py-1 rounded"
-                >
+                <button onClick={() => deleteCourse(c.id)} className="bg-red-600 text-white px-2 py-1 rounded">
                   Delete
                 </button>
               </td>

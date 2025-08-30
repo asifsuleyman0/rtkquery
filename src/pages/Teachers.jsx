@@ -136,10 +136,10 @@ const Teachers = () => {
           <table className="w-full border border-gray-300 rounded">
             <thead>
               <tr className="bg-gray-200">
-                <th className="border p-2">ID</th>
                 <th className="border p-2">Ad</th>
                 <th className="border p-2">Soyad</th>
                 <th className="border p-2">Bio</th>
+                <th className="border p-2">Linkedin</th>
                 <th className="border p-2">Şəkil</th>
                 <th className="border p-2">Əməliyyatlar</th>
               </tr>
@@ -147,31 +147,22 @@ const Teachers = () => {
             <tbody>
               {teachers.map((teacher) => (
                 <tr key={teacher.id} className="hover:bg-gray-50">
-                  <td className="border p-2">{teacher.id}</td>
                   <td className="border p-2">{teacher.firstName}</td>
                   <td className="border p-2">{teacher.lastName}</td>
                   <td className="border p-2 max-w-xs truncate">{teacher.bio}</td>
+                  <td className="border p-2">{teacher.linkedinUrl}</td>
                   <td className="border p-2">
                     {teacher.photoUrl && (
-                      <img 
-                        src={teacher.photoUrl} 
-                        alt="Teacher" 
-                        className="w-10 h-10 rounded-full object-cover"
-                        onError={(e) => {e.target.style.display = 'none'}}
-                      />
+                      <img src={teacher.photoUrl} alt="Teacher" className="w-10 h-10 rounded-full object-cover"
+                        onError={(e) => {e.target.style.display = 'none'}}/>
                     )}
                   </td>
                   <td className="border p-2 space-x-2">
-                    <button
-                      onClick={() => handleEdit(teacher)}
-                      className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
-                    >
+                    <button onClick={() => handleEdit(teacher)}
+                      className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600">
                       Redaktə
                     </button>
-                    <button
-                      onClick={() => handleDelete(teacher.id)}
-                      className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
-                    >
+                    <button onClick={() => handleDelete(teacher.id)} className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">
                       Sil
                     </button>
                   </td>

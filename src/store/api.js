@@ -99,6 +99,31 @@ export const api = createApi({
       query: (id) => ({ url: `/videos/${id}`, method: "DELETE" }),
       invalidatesTags: ["Video"],
     }),
+
+
+
+    // Contact Forms
+    getContactForms: builder.query({
+      query: () => "/contact-forms",
+      providesTags: ["ContactForm"],
+      transformResponse: (response) => response.content || response.data || response,
+    }),
+    getContactForm: builder.query({
+      query: (id) => `/contact-forms/${id}`,
+      providesTags: ["ContactForm"],
+    }),
+    downloadCv: builder.query({
+      query: (id) => ({
+        url: `/contact-forms/${id}/cv`,
+        method: "GET",
+      }),
+      // server cavabı `blob` tipində gələcək
+      transformResponse: async (response, meta, arg) => {
+        const blob = await response.blob();
+        return blob;
+      },
+    }),
+
   }),
 });
 
@@ -120,4 +145,8 @@ export const {
   useCreateVideoMutation,
   useUpdateVideoMutation,
   useDeleteVideoMutation,
+  useGetContactFormsQuery,
+  useGetContactFormQuery,
+  useDownloadCvQuery,
+
 } = api;
