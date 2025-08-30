@@ -38,6 +38,7 @@ const Courses = () => {
       <div className="flex flex-col space-y-2 mb-4">
         <div className="flex space-x-2">
           <input className="border p-2 flex-1" placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}/>
+          <input className="border p-2 flex-1" placeholder="ImageUrl" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}/>
           <button onClick={handleSubmit} className="bg-blue-600 text-white px-4 rounded">
             {form.id ? "Update" : "Add"}
           </button>
