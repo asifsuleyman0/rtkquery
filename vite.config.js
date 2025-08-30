@@ -1,9 +1,21 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import commonjs from "@rollup/plugin-commonjs";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(),commonjs()],
-  
-})
+  plugins: [react(), tailwindcss(), commonjs()],
+  build: {
+    rollupOptions: {
+      external: [
+        // Node.js spesifik paketləri kənar et
+        "fs",
+        "path",
+        "crypto",
+        "os",
+        "stream",
+        "buffer"
+      ],
+    },
+  },
+});
