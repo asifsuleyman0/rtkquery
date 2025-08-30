@@ -1,28 +1,24 @@
-import { useGetContactFormsQuery } from "../api";
+import React from "react";
+import { useGetContactFormsQuery, useDownloadCvQuery } from "../api";
 import { saveAs } from "file-saver";
 
 const Cv = () => {
-  const { data: contacts, isLoading, isError } = useGetContactFormsQuery();
+  const { data: contacts = [], isLoading, isError } = useGetContactFormsQuery();
+
+  const handleDownload = async (id, filename) => {
+    const { data: blob } = await useDownloadCvQuery(id, { skip: false });
+    if (blob) saveAs(blob, filename);
+    else alert("CV yüklənmədi!");
+  };
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading contact forms.</p>;
-
-  const handleDownload = async (id, filename) => {
-    try {
-      const res = await fetch(`https://digacc-5.onrender.com/api/contact-forms/${id}/cv`);
-      if (!res.ok) throw new Error("CV download failed");
-      const blob = await res.blob();
-      saveAs(blob, filename); 
-    } catch (err) {
-      console.error(err);
-      alert("CV yüklənmədi!");
-    }
-  };
+  if (!contacts.length) return <p>No contact forms found.</p>;
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Contact Forms CVs</h1>
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="w-full border border-gray-300 border-collapse">
         <thead>
           <tr>
             <th className="border border-gray-300 p-2">Name</th>
@@ -40,7 +36,7 @@ const Cv = () => {
               <td className="border border-gray-300 p-2">
                 {c.cvUrl ? (
                   <button
-                    className="px-2 py-1 bg-blue-600 text-white rounded"
+                    className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                     onClick={() => handleDownload(c.id, `${c.firstName}_${c.lastName}_CV.pdf`)}
                   >
                     Download
