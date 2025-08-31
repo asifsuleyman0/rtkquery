@@ -3,6 +3,9 @@ import { useGetContactFormsQuery } from "../store/api";
 
 const Applicants = () => {
   const { data: applicants = [], isLoading, error } = useGetContactFormsQuery();
+  
+    if (refetchApplicants) refetchApplicants.current = refetch;
+
 
   if (isLoading) {
     return (
