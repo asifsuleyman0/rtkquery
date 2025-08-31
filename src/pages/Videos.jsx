@@ -4,7 +4,7 @@ import {
   useCreateVideoMutation,
   useUpdateVideoMutation,
   useDeleteVideoMutation,
-} from "../store/api";
+} from "../store/videoApi"; // 👉 artıq videoApi-dən gəlir
 
 const Videos = () => {
   const { data: response, isLoading, error } = useGetVideosQuery();
@@ -17,53 +17,56 @@ const Videos = () => {
     courseId: "",
     title: "",
     description: "",
-    videoFile: null, // Yeni: fayl üçün
+    videoFile: null,
   });
 
-  const data = Array.isArray(response) ? response : response?.content || [];
+  const data = Array.isArray(response)
+    ? response
+    : response?.content || response?.data?.videos || [];
 
   const handleSubmit = async () => {
-  if (!form.title || !form.courseId) {
-    alert("Title və Course mütləqdir!");
-    return;
-  }
-
-  if (!form.videoFile && !form.id) {
-    alert("Fayl seçilməyib!");
-    return;
-  }
-
-  const videoDto = {
-    courseId: form.courseId,
-    title: form.title,
-    description: form.description || "",
-    videoUrl : ""
-  };
-
-  try {
-    if (form.id) {
-      await updateVideo({ id: form.id, ...videoDto });
-    } else {
-      const formData = new FormData();
-      formData.append("video", form.videoFile); // fayl
-      formData.append("videoDto", JSON.stringify(videoDto)); // JSON məlumat
-
-      await createVideo(formData); // birbaşa FormData göndərilir
+    if (!form.title || !form.courseId) {
+      alert("Title və Course ID mütləqdir!");
+      return;
     }
 
-    setForm({
-      id: null,
-      courseId: "",
-      title: "",
-      description: "",
-      videoFile: null,
-    });
-  } catch (err) {
-    console.error("Error submitting form:", err);
-    alert("Xəta baş verdi: " + (err?.data?.message || err.message));
-  }
-};
+    if (!form.videoFile && !form.id) {
+      alert("Fayl seçilməyib!");
+      return;
+    }
 
+    try {
+      if (form.id) {
+        // 🔹 Update (fayl lazım deyil, sadəcə text məlumat)
+        await updateVideo({
+          id: form.id,
+          courseId: form.courseId,
+          title: form.title,
+          description: form.description || "",
+        });
+      } else {
+        // 🔹 Yeni video yükləmə
+        const formData = new FormData();
+        formData.append("video", form.videoFile);
+        formData.append("courseId", form.courseId);
+        formData.append("title", form.title);
+        formData.append("description", form.description || "");
+
+        await createVideo(formData);
+      }
+
+      setForm({
+        id: null,
+        courseId: "",
+        title: "",
+        description: "",
+        videoFile: null,
+      });
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      alert("Xəta baş verdi: " + (err?.data?.message || err.message));
+    }
+  };
 
   if (isLoading) return <p>Yüklənir...</p>;
   if (error) return <p>Xəta baş verdi</p>;
@@ -72,6 +75,7 @@ const Videos = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Videos</h1>
 
+      {/* Form */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <input
           className="border p-2 rounded"
@@ -105,6 +109,7 @@ const Videos = () => {
         {form.id ? "Update" : "Add"}
       </button>
 
+      {/* Video List */}
       {data.length > 0 && (
         <div className="overflow-x-auto">
           <table className="w-full border border-gray-300 rounded">
@@ -121,15 +126,17 @@ const Videos = () => {
               {data.map((v) => (
                 <tr key={v.id} className="hover:bg-gray-50">
                   <td className="border p-2">{v.id}</td>
-                  <td className="border p-2">{v.course?.id}</td>
+                  <td className="border p-2">{v.course?.id || v.courseId}</td>
                   <td className="border p-2">{v.title}</td>
-                  <td className="border p-2 max-w-xs truncate">{v.description}</td>
+                  <td className="border p-2 max-w-xs truncate">
+                    {v.description}
+                  </td>
                   <td className="border p-2 space-x-2">
                     <button
                       onClick={() =>
                         setForm({
                           id: v.id,
-                          courseId: v.course?.id || "",
+                          courseId: v.course?.id || v.courseId || "",
                           title: v.title,
                           description: v.description,
                           videoFile: null,
@@ -140,7 +147,7 @@ const Videos = () => {
                       Edit
                     </button>
                     <button
-                      onClick={() => deleteVideo(v.id)}
+                      onClick={() => deleteVideo({ id: v.id })}
                       className="bg-red-600 text-white px-2 py-1 rounded"
                     >
                       Delete

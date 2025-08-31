@@ -69,34 +69,6 @@ export const api = createApi({
       invalidatesTags: ["News"],
     }),
 
-    // Videos
-    getVideos: builder.query({
-      query: () => "/videos",
-      providesTags: ["Video"],
-      transformResponse: (response) => response.content || response.data || response,
-    }),
-
-    createVideo: builder.mutation({
-    query: (formData) => ({
-      url: "/videos/upload",
-      method: "POST",
-      body: formData, // artıq FormData birbaşa gəlir
-      // Content-Type təyin etməyin, browser özü təyin edəcək
-    }),
-    invalidatesTags: ["Video"],
-  }),
-
-    updateVideo: builder.mutation({
-      query: ({ id, ...body }) => ({ url: `/videos/${id}`, method: "PUT", body }),
-      invalidatesTags: ["Video"],
-    }),
-    deleteVideo: builder.mutation({
-      query: (id) => ({ url: `/videos/${id}`, method: "DELETE" }),
-      invalidatesTags: ["Video"],
-    }),
-
-
-
     // Contact Forms
     getContactForms: builder.query({
       query: () => "/contact-forms",
@@ -136,10 +108,6 @@ export const {
   useCreateNewsMutation,
   useUpdateNewsMutation,
   useDeleteNewsMutation,
-  useGetVideosQuery,
-  useCreateVideoMutation,
-  useUpdateVideoMutation,
-  useDeleteVideoMutation,
   useGetContactFormsQuery,
   useGetContactFormQuery,
   useDownloadCvQuery,
