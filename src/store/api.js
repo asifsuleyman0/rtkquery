@@ -50,6 +50,11 @@ export const api = createApi({
       transformResponse: (response) => response.content || response.data || response,
     }),
 
+    deleteUsers: builder.mutation({
+      query: (id) => ({ url:`/users/${id}`, method : "DELETE"}),
+      invalidatesTags: ["User"],
+    }),
+
     // News
     getNews: builder.query({
       query: () => "/news",
