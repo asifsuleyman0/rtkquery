@@ -85,7 +85,7 @@ const Videos = () => {
                   </td>
                   <td className="border p-2">
                     <button
-                      onClick={() => deleteVideo({ id: v.id })}
+                      onClick={() => deleteVideo(v.id)}
                       className="bg-red-600 text-white px-2 py-1 rounded"
                     >
                       Sil
