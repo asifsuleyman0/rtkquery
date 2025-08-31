@@ -23,41 +23,48 @@ const Videos = () => {
   const data = Array.isArray(response) ? response : response?.content || [];
 
   const handleSubmit = async () => {
-    if (!form.title || !form.courseId) {
-      alert("Title və Course mütləqdir!");
-      return;
-    }
+  if (!form.title || !form.courseId) {
+    alert("Title və Course mütləqdir!");
+    return;
+  }
 
-    const videoDto = {
-      courseId: form.courseId,
-      title: form.title,
-      description: form.description || "",
-      videoUrl: "" ,
-    };
+  if (!form.videoFile && !form.id) {
+    alert("Fayl seçilməyib!");
+    return;
+  }
 
-    try {
-      if (form.id) {
-        await updateVideo({ id: form.id, ...videoDto });
-      } else {
-        if (!form.videoFile) {
-          alert("Fayl seçilməyib!");
-          return;
-        }
-        await createVideo({ videoFile: form.videoFile, videoDto });
-      }
-
-      setForm({
-        id: null,
-        courseId: "",
-        title: "",
-        description: "",
-        videoFile: null,
-      });
-    } catch (err) {
-      console.error("Error submitting form:", err);
-      alert("Xəta baş verdi: " + (err?.data?.message || err.message));
-    }
+  const videoDto = {
+    courseId: form.courseId,
+    title: form.title,
+    description: form.description || "",
+    videoUrl: "",
   };
+
+  try {
+    if (form.id) {
+      // Update üçün (fayl yoxdursa sadəcə JSON)
+      await updateVideo({ id: form.id, ...videoDto });
+    } else {
+      // Create üçün FormData istifadə et
+      const formData = new FormData();
+      formData.append("video", form.videoFile);
+      formData.append("videoDto", JSON.stringify(videoDto));
+
+      await createVideo(formData);
+    }
+
+    setForm({
+      id: null,
+      courseId: "",
+      title: "",
+      description: "",
+      videoFile: null,
+    });
+  } catch (err) {
+    console.error("Error submitting form:", err);
+    alert("Xəta baş verdi: " + (err?.data?.message || err.message));
+  }
+};
 
   if (isLoading) return <p>Yüklənir...</p>;
   if (error) return <p>Xəta baş verdi</p>;
