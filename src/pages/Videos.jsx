@@ -4,7 +4,7 @@ import {
   useCreateVideoMutation,
   useUpdateVideoMutation,
   useDeleteVideoMutation,
-} from "../store/videoApi"; // 👉 artıq videoApi-dən gəlir
+} from "../store/videoApi.js"; // 👉 artıq videoApi-dən gəlir
 
 const Videos = () => {
   const { data: response, isLoading, error } = useGetVideosQuery();
