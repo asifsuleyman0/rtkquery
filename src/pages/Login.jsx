@@ -14,21 +14,27 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded p-8 w-80 space-y-4"
+        className="bg-white shadow-2xl rounded-3xl p-8 w-80 space-y-6 relative overflow-hidden"
       >
-        <h2 className="text-xl font-bold">Admin Login</h2>
+        <div className="absolute -top-16 -right-16 w-40 h-40 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+
+        <h2 className="text-2xl font-extrabold text-gray-800 text-center mb-4 tracking-wide">
+          Admin Login
+        </h2>
+
         <input
-          className="border w-full p-2 rounded"
+          className="border border-gray-300 w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
           type="text"
           placeholder="İstifadəçi adı"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <input
-          className="border w-full p-2 rounded"
+          className="border border-gray-300 w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300"
           type="password"
           placeholder="Şifrə"
           value={password}
@@ -36,7 +42,7 @@ const Login = ({ onLogin }) => {
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white w-full p-2 rounded"
+          className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300"
         >
           Daxil ol
         </button>
