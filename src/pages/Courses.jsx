@@ -12,7 +12,7 @@ const Courses = () => {
   const [updateCourse] = useUpdateCourseMutation();
   const [deleteCourse] = useDeleteCourseMutation();
 
-  const [form, setForm] = useState({ id: null, title: "", description: "" });
+  const [form, setForm] = useState({ id: null, title: "", description: "", imageUrl:""});
 
   const handleSubmit = async () => {
     if (!form.title) return;
@@ -20,9 +20,9 @@ const Courses = () => {
       if (form.id) {
         await updateCourse(form);
       } else {
-        await createCourse({ title: form.title, description: form.description });
+        await createCourse({ title: form.title, description: form.description ,imageUrl: form.imageUrl });
       }
-      setForm({ id: null, title: "", description: "" });
+      setForm({ id: null, title: "", description: "",imageUrl:""});
     } catch (err) {
       console.error("Error submitting form:", err);
     }
@@ -56,8 +56,8 @@ const Courses = () => {
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Title</th>
-            <th className="border p-2">Description</th>
             <th className="border p-2">ImageUrl</th>
+            <th className="border p-2">Description</th>
             <th className="border p-2">Actions</th>
           </tr>
         </thead>
