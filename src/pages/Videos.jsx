@@ -2,66 +2,33 @@ import { useState } from "react";
 import {
   useGetVideosQuery,
   useCreateVideoMutation,
-  useUpdateVideoMutation,
   useDeleteVideoMutation,
-} from "../store/videoApi.js"; // 👉 artıq videoApi-dən gəlir
+} from "../store/videoApi.js"; // ✅ videoApi istifadə olunur
 
 const Videos = () => {
   const { data: response, isLoading, error } = useGetVideosQuery();
   const [createVideo] = useCreateVideoMutation();
-  const [updateVideo] = useUpdateVideoMutation();
   const [deleteVideo] = useDeleteVideoMutation();
 
-  const [form, setForm] = useState({
-    id: null,
-    courseId: "",
-    title: "",
-    description: "",
-    videoFile: null,
-  });
+  const [videoFile, setVideoFile] = useState(null);
 
   const data = Array.isArray(response)
     ? response
-    : response?.content || response?.data?.videos || [];
+    : response?.data?.videos || [];
 
   const handleSubmit = async () => {
-    if (!form.title || !form.courseId) {
-      alert("Title və Course ID mütləqdir!");
-      return;
-    }
-
-    if (!form.videoFile && !form.id) {
-      alert("Fayl seçilməyib!");
+    if (!videoFile) {
+      alert("Video faylı seçilməyib!");
       return;
     }
 
     try {
-      if (form.id) {
-        // 🔹 Update (fayl lazım deyil, sadəcə text məlumat)
-        await updateVideo({
-          id: form.id,
-          courseId: form.courseId,
-          title: form.title,
-          description: form.description || "",
-        });
-      } else {
-        // 🔹 Yeni video yükləmə
-        const formData = new FormData();
-        formData.append("video", form.videoFile);
-        formData.append("courseId", form.courseId);
-        formData.append("title", form.title);
-        formData.append("description", form.description || "");
+      const formData = new FormData();
+      formData.append("video", videoFile);
 
-        await createVideo(formData);
-      }
+      await createVideo(formData);
 
-      setForm({
-        id: null,
-        courseId: "",
-        title: "",
-        description: "",
-        videoFile: null,
-      });
+      setVideoFile(null);
     } catch (err) {
       console.error("Error submitting form:", err);
       alert("Xəta baş verdi: " + (err?.data?.message || err.message));
@@ -73,41 +40,22 @@ const Videos = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Videos</h1>
+      <h1 className="text-2xl font-bold mb-4">Videolar</h1>
 
-      {/* Form */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <input
-          className="border p-2 rounded"
-          placeholder="Course ID"
-          value={form.courseId}
-          onChange={(e) => setForm({ ...form, courseId: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="Description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-        />
+      {/* Upload Form */}
+      <div className="flex items-center gap-2 mb-4">
         <input
           type="file"
           className="border p-2 rounded"
-          onChange={(e) => setForm({ ...form, videoFile: e.target.files[0] })}
+          onChange={(e) => setVideoFile(e.target.files[0])}
         />
+        <button
+          onClick={handleSubmit}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Yüklə
+        </button>
       </div>
-
-      <button
-        onClick={handleSubmit}
-        className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
-      >
-        {form.id ? "Update" : "Add"}
-      </button>
 
       {/* Video List */}
       {data.length > 0 && (
@@ -116,9 +64,10 @@ const Videos = () => {
             <thead>
               <tr className="bg-gray-200">
                 <th className="border p-2">ID</th>
-                <th className="border p-2">Course ID</th>
-                <th className="border p-2">Title</th>
-                <th className="border p-2">Description</th>
+                <th className="border p-2">Original Name</th>
+                <th className="border p-2">Filename</th>
+                <th className="border p-2">Size (MB)</th>
+                <th className="border p-2">Uploaded At</th>
                 <th className="border p-2">Actions</th>
               </tr>
             </thead>
@@ -126,31 +75,20 @@ const Videos = () => {
               {data.map((v) => (
                 <tr key={v.id} className="hover:bg-gray-50">
                   <td className="border p-2">{v.id}</td>
-                  <td className="border p-2">{v.course?.id || v.courseId}</td>
-                  <td className="border p-2">{v.title}</td>
-                  <td className="border p-2 max-w-xs truncate">
-                    {v.description}
+                  <td className="border p-2">{v.original_name}</td>
+                  <td className="border p-2">{v.filename}</td>
+                  <td className="border p-2">
+                    {(v.file_size / (1024 * 1024)).toFixed(2)} MB
                   </td>
-                  <td className="border p-2 space-x-2">
-                    <button
-                      onClick={() =>
-                        setForm({
-                          id: v.id,
-                          courseId: v.course?.id || v.courseId || "",
-                          title: v.title,
-                          description: v.description,
-                          videoFile: null,
-                        })
-                      }
-                      className="bg-yellow-500 text-white px-2 py-1 rounded"
-                    >
-                      Edit
-                    </button>
+                  <td className="border p-2">
+                    {new Date(v.uploaded_at).toLocaleString()}
+                  </td>
+                  <td className="border p-2">
                     <button
                       onClick={() => deleteVideo({ id: v.id })}
                       className="bg-red-600 text-white px-2 py-1 rounded"
                     >
-                      Delete
+                      Sil
                     </button>
                   </td>
                 </tr>
