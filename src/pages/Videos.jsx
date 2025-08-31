@@ -28,21 +28,22 @@ const Videos = () => {
       return;
     }
 
-    const videoDTO = {
+    const videoDto = {
       courseId: form.courseId,
       title: form.title,
       description: form.description || "",
+      videoUrl: "" ,
     };
 
     try {
       if (form.id) {
-        await updateVideo({ id: form.id, ...videoDTO });
+        await updateVideo({ id: form.id, ...videoDto });
       } else {
         if (!form.videoFile) {
           alert("Fayl seçilməyib!");
           return;
         }
-        await createVideo({ videoFile: form.videoFile, videoDTO });
+        await createVideo({ videoFile: form.videoFile, videoDto });
       }
 
       setForm({
