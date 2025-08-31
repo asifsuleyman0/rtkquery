@@ -17,21 +17,11 @@ const Teachers = () => {
     firstName: "", 
     lastName: "",
     bio: "",
-    photoUrl: ""
+    photoUrl: "",
+    linkedinUrl: ""
   });
 
-  // API cavabını debug etmək üçün
-  console.log("API Response:", data);
-  console.log("Is Array:", Array.isArray(data));
-
-  let teachers = [];
-  if (Array.isArray(data)) {
-    teachers = data;
-  } else if (data?.content && Array.isArray(data.content)) {
-    teachers = data.content;
-  }
-
-  console.log("Processed teachers:", teachers);
+  let teachers = Array.isArray(data) ? data : data?.content || [];
 
   const handleSubmit = async () => {
     if (!form.firstName || !form.lastName) {
@@ -44,7 +34,8 @@ const Teachers = () => {
         firstName: form.firstName,
         lastName: form.lastName,
         bio: form.bio || "",
-        photoUrl: form.photoUrl || ""
+        photoUrl: form.photoUrl || "",
+        linkedinUrl: form.linkedinUrl || ""
       };
 
       if (form.id) {
@@ -53,7 +44,7 @@ const Teachers = () => {
         await createTeacher(teacherData);
       }
 
-      setForm({ id: null, firstName: "", lastName: "", bio: "", photoUrl: "" });
+      setForm({ id: null, firstName: "", lastName: "", bio: "", photoUrl: "", linkedinUrl: "" });
     } catch (err) {
       console.error("Error submitting form:", err);
       alert("Xəta baş verdi: " + (err?.data?.message || err.message));
@@ -66,7 +57,8 @@ const Teachers = () => {
       firstName: teacher.firstName || "",
       lastName: teacher.lastName || "",
       bio: teacher.bio || "",
-      photoUrl: teacher.photoUrl || ""
+      photoUrl: teacher.photoUrl || "",
+      linkedinUrl: teacher.linkedinUrl || ""
     });
   };
 
@@ -81,105 +73,94 @@ const Teachers = () => {
     }
   };
 
-  if (isLoading) return <p>Yüklənir...</p>;
-  
-  if (error) {
-    console.error("API Error:", error);
-    return (
-      <div>
-        <p>Xəta baş verdi:</p>
-        <pre>{JSON.stringify(error, null, 2)}</pre>
-      </div>
-    );
-  }
+  if (isLoading) return <p className="text-center py-10">Yüklənir...</p>;
+  if (error) return <p className="text-center py-10 text-red-600">Xəta baş verdi</p>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Müəllimlər</h1>
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">Müəllimlər</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <input
-          className="border p-2 rounded"
-          placeholder="Ad"
-          value={form.firstName}
-          onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="Soyad"
-          value={form.lastName}
-          onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="Bio"
-          value={form.bio}
-          onChange={(e) => setForm({ ...form, bio: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="Linkedin"
-          value={form.linkedinUrl}
-          onChange={(e) => setForm({ ...form, linkedinUrl: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="Şəkil URL"
-          value={form.photoUrl}
-          onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
-        />
+      {/* Form */}
+      <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="Ad"
+            value={form.firstName}
+            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+          />
+          <input
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="Soyad"
+            value={form.lastName}
+            onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+          />
+          <input
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="LinkedIn"
+            value={form.linkedinUrl}
+            onChange={(e) => setForm({ ...form, linkedinUrl: e.target.value })}
+          />
+          <input
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none md:col-span-2"
+            placeholder="Bio"
+            value={form.bio}
+            onChange={(e) => setForm({ ...form, bio: e.target.value })}
+          />
+          <input
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none md:col-span-2"
+            placeholder="Şəkil URL"
+            value={form.photoUrl}
+            onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
+          />
+        </div>
+        <button
+          onClick={handleSubmit}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300"
+        >
+          {form.id ? "Yenilə" : "Əlavə et"}
+        </button>
       </div>
 
-      <button
-        onClick={handleSubmit}
-        className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
-      >
-        {form.id ? "Yenilə" : "Əlavə et"}
-      </button>
+      {/* Teachers Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {teachers.map((teacher) => (
+          <div key={teacher.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+            <div className="relative">
+              {teacher.photoUrl ? (
+                <img src={teacher.photoUrl} alt={teacher.firstName} className="w-full h-48 object-cover"/>
+              ) : (
+                <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">No Image</div>
+              )}
+            </div>
+            <div className="p-4 space-y-2">
+              <h3 className="text-lg font-bold text-gray-800">{teacher.firstName} {teacher.lastName}</h3>
+              <p className="text-gray-600 text-sm line-clamp-3">{teacher.bio || "N/A"}</p>
+              {teacher.linkedinUrl && (
+                <a href={teacher.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 text-sm underline">
+                  LinkedIn
+                </a>
+              )}
+              <div className="flex space-x-2 mt-3">
+                <button
+                  onClick={() => handleEdit(teacher)}
+                  className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl font-medium transition-colors duration-300"
+                >
+                  Redaktə
+                </button>
+                <button
+                  onClick={() => handleDelete(teacher.id)}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl font-medium transition-colors duration-300"
+                >
+                  Sil
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-      {teachers.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="w-full border border-gray-300 rounded">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2">Ad</th>
-                <th className="border p-2">Soyad</th>
-                <th className="border p-2">Bio</th>
-                <th className="border p-2">Linkedin</th>
-                <th className="border p-2">Şəkil</th>
-                <th className="border p-2">Əməliyyatlar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {teachers.map((teacher) => (
-                <tr key={teacher.id} className="hover:bg-gray-50">
-                  <td className="border p-2">{teacher.firstName}</td>
-                  <td className="border p-2">{teacher.lastName}</td>
-                  <td className="border p-2 max-w-xs truncate">{teacher.bio}</td>
-                  <td className="border p-2">{teacher.linkedinUrl}</td>
-                  <td className="border p-2">
-                    {teacher.photoUrl && (
-                      <img src={teacher.photoUrl} alt="Teacher" className="w-10 h-10 rounded-full object-cover"
-                        onError={(e) => {e.target.style.display = 'none'}}/>
-                    )}
-                  </td>
-                  <td className="border p-2 space-x-2">
-                    <button onClick={() => handleEdit(teacher)}
-                      className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600">
-                      Redaktə
-                    </button>
-                    <button onClick={() => handleDelete(teacher.id)} className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">
-                      Sil
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <p className="text-gray-500">Heç bir müəllim tapılmadı.</p>
-      )}
+      {teachers.length === 0 && <p className="text-center text-gray-500 mt-6">Heç bir müəllim tapılmadı.</p>}
     </div>
   );
 };

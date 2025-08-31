@@ -12,7 +12,6 @@ const News = () => {
   const [updateNews] = useUpdateNewsMutation();
   const [deleteNews] = useDeleteNewsMutation();
 
-  // form state
   const [form, setForm] = useState({
     id: null,
     title: "",
@@ -21,9 +20,7 @@ const News = () => {
     publishedAt: "",
   });
 
-  const data = Array.isArray(response)
-    ? response
-    : response?.content || response;
+  const data = Array.isArray(response) ? response : response?.content || [];
 
   const handleSubmit = async () => {
     if (!form.title || !form.description) {
@@ -43,100 +40,92 @@ const News = () => {
     } else {
       await createNews(payload);
     }
+
     setForm({ id: null, title: "", description: "", imageUrl: "", publishedAt: "" });
   };
 
-  if (isLoading) return <p>Yüklənir...</p>;
-  if (error) return <p>Xəta baş verdi</p>;
+  if (isLoading) return <p className="text-center py-10">Yüklənir...</p>;
+  if (error) return <p className="text-center py-10 text-red-600">Xəta baş verdi</p>;
+
+  const formatDate = (isoDate) => {
+    if (!isoDate) return "";
+    const d = new Date(isoDate);
+    return `${d.getDate().toString().padStart(2,"0")}.${(d.getMonth()+1).toString().padStart(2,"0")}.${d.getFullYear().toString().slice(-2)}`;
+  };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">News</h1>
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">Xəbərlər</h1>
 
       {/* Form */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-4">
-        <input
-          className="border p-2 rounded"
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="Image URL"
-          value={form.imageUrl}
-          onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-        />
-        <input
-          type="datetime-local"
-          className="border p-2 rounded"
-          value={form.publishedAt}
-          onChange={(e) => setForm({ ...form, publishedAt: e.target.value })}
-        />
-        <textarea
-          className="border p-2 rounded col-span-1 md:col-span-3"
-          placeholder="Description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-        />
+      <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="Title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
+          <input
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="Image URL"
+            value={form.imageUrl}
+            onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+          />
+          <input
+            type="datetime-local"
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            value={form.publishedAt}
+            onChange={(e) => setForm({ ...form, publishedAt: e.target.value })}
+          />
+          <textarea
+            className="border p-3 rounded-xl col-span-1 md:col-span-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="Description"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+          />
+        </div>
         <button
           onClick={handleSubmit}
-          className="bg-blue-600 text-white px-4 py-2 rounded col-span-1 md:col-span-3"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300"
         >
-          {form.id ? "Update" : "Add"}
+          {form.id ? "Yenilə" : "Əlavə et"}
         </button>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full border border-gray-300 rounded">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border p-2">Title</th>
-              <th className="border p-2">Description</th>
-              <th className="border p-2">Image</th>
-              <th className="border p-2">Published At</th>
-              <th className="border p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((n) => (
-              <tr key={n.id} className="hover:bg-gray-50">
-                <td className="border p-2">{n.title}</td>
-                <td className="border p-2">{n.description}</td>
-                <td className="border p-2">
-                  {n.imageUrl && (
-                    <img
-                      src={n.imageUrl}
-                      alt={n.title}
-                      className="w-16 h-16 object-cover rounded"
-                    />
-                  )}
-                </td>
-                <td className="border p-2">
-                  {n.publishedAt
-                    ? new Date(n.publishedAt).toLocaleString()
-                    : ""}
-                </td>
-                <td className="border p-2 space-x-2">
-                  <button
-                    onClick={() => setForm(n)}
-                    className="bg-yellow-500 text-white px-2 py-1 rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteNews(n.id)}
-                    className="bg-red-600 text-white px-2 py-1 rounded"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* News Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {data.map((news) => (
+          <div key={news.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+            {news.imageUrl ? (
+              <img src={news.imageUrl} alt={news.title} className="w-full h-48 object-cover" />
+            ) : (
+              <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">No Image</div>
+            )}
+            <div className="p-4 space-y-2">
+              <h3 className="text-lg font-bold text-gray-800">{news.title}</h3>
+              <p className="text-gray-600 text-sm line-clamp-3">{news.description}</p>
+              <p className="text-gray-500 text-xs">{formatDate(news.publishedAt)}</p>
+              <div className="flex space-x-2 mt-3">
+                <button
+                  onClick={() => setForm(news)}
+                  className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl font-medium transition-colors duration-300"
+                >
+                  Redaktə
+                </button>
+                <button
+                  onClick={() => deleteNews(news.id)}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl font-medium transition-colors duration-300"
+                >
+                  Sil
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
+
+      {data.length === 0 && <p className="text-center text-gray-500 mt-6">Heç bir xəbər tapılmadı.</p>}
     </div>
   );
 };
