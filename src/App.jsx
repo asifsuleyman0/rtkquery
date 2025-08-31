@@ -7,7 +7,7 @@ import Users from "./pages/Users";
 import News from "./pages/News";
 import Videos from "./pages/Videos";
 import Login from "./pages/Login";
-import Cv from "./pages/Cv";
+import Applicants from "./pages/Applicants";
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
@@ -26,7 +26,7 @@ function App() {
             <Route path="/users" element={<Users />} />
             <Route path="/news" element={<News />} />
             <Route path="/videos" element={<Videos />} />
-            <Route path="/cv" element={<Cv />} />
+            <Route path="/applicants" element={<Applicants />} />
           </Routes>
         </div>
       </div>
