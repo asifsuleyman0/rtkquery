@@ -77,19 +77,14 @@ export const api = createApi({
     }),
 
     createVideo: builder.mutation({
-      query: ({ videoFile, videoDTO }) => {
-        const formData = new FormData();
-        formData.append("video", videoFile);
-        formData.append("videoDTO", JSON.stringify(videoDTO));
-
-        return {
-          url: "/videos/upload",
-          method: "POST",
-          body: formData,
-        };
-      },
-      invalidatesTags: ["Video"],
+    query: (formData) => ({
+      url: "/videos/upload",
+      method: "POST",
+      body: formData, // artıq FormData birbaşa gəlir
+      // Content-Type təyin etməyin, browser özü təyin edəcək
     }),
+    invalidatesTags: ["Video"],
+  }),
 
     updateVideo: builder.mutation({
       query: ({ id, ...body }) => ({ url: `/videos/${id}`, method: "PUT", body }),

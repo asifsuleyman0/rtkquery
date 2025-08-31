@@ -37,20 +37,18 @@ const Videos = () => {
     courseId: form.courseId,
     title: form.title,
     description: form.description || "",
-    videoUrl: "",
+    videoUrl : ""
   };
 
   try {
     if (form.id) {
-      // Update üçün (fayl yoxdursa sadəcə JSON)
       await updateVideo({ id: form.id, ...videoDto });
     } else {
-      // Create üçün FormData istifadə et
       const formData = new FormData();
-      formData.append("video", form.videoFile);
-      formData.append("videoDto", JSON.stringify(videoDto));
+      formData.append("video", form.videoFile); // fayl
+      formData.append("videoDto", JSON.stringify(videoDto)); // JSON məlumat
 
-      await createVideo(formData);
+      await createVideo(formData); // birbaşa FormData göndərilir
     }
 
     setForm({
@@ -65,6 +63,7 @@ const Videos = () => {
     alert("Xəta baş verdi: " + (err?.data?.message || err.message));
   }
 };
+
 
   if (isLoading) return <p>Yüklənir...</p>;
   if (error) return <p>Xəta baş verdi</p>;
