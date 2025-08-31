@@ -49,11 +49,11 @@ export const api = createApi({
       providesTags: ["User"],
       transformResponse: (response) => response.content || response.data || response,
     }),
-
-    deleteUsers: builder.mutation({
-      query: (id) => ({ url:`/users/${id}`, method : "DELETE"}),
+    deleteUser: builder.mutation({
+      query: (id) => ({ url: `/users/${id}`, method: "DELETE" }),
       invalidatesTags: ["User"],
     }),
+
 
     // News
     getNews: builder.query({
@@ -109,6 +109,7 @@ export const {
   useUpdateTeacherMutation,
   useDeleteTeacherMutation,
   useGetUsersQuery,
+  useDeleteUserMutation,
   useGetNewsQuery,
   useCreateNewsMutation,
   useUpdateNewsMutation,
