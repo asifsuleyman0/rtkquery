@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetContactFormsQuery,downloadCv } from "../store/api";
+import { useGetContactFormsQuery } from "../store/api";
 
 const Applicants = () => {
   const { data: applicants = [], isLoading, error } = useGetContactFormsQuery();

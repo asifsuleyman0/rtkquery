@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Courses from "./pages/Courses";
@@ -11,14 +11,19 @@ import Applicants from "./pages/Applicants";
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
+  const refetchApplicants = useRef(null); // Applicants səhifəsinin refetch funksiyasını saxlayırıq
 
   if (!isAuth) return <Login onLogin={() => setIsAuth(true)} />;
 
   return (
     <Router>
       <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 p-6 overflow-y-auto">
+        <Sidebar onRefresh={(path) => {
+          if (path === "/applicants" && refetchApplicants.current) {
+            refetchApplicants.current(); // Sidebar klikləndikdə refetch çağırılır
+          }
+        }} />
+        <div className="flex-1 overflow-y-auto">
           <Routes>
             <Route path="/" element={<Navigate to="/courses" />} />
             <Route path="/courses" element={<Courses />} />
@@ -26,7 +31,7 @@ function App() {
             <Route path="/users" element={<Users />} />
             <Route path="/news" element={<News />} />
             <Route path="/videos" element={<Videos />} />
-            <Route path="/applicants" element={<Applicants />} />
+            <Route path="/applicants" element={<Applicants refetchApplicants={refetchApplicants} />} />
           </Routes>
         </div>
       </div>
