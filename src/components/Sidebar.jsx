@@ -8,6 +8,7 @@ const Sidebar = () => {
     { name: "İstifadəçilər", path: "/users" },
     { name: "Xəbərlər", path: "/news" },
     { name: "Videolar", path: "/videos" },
+    { name: "CV basa", path: "/applicants" },
   ];
 
   return (
