@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { api } from "./api";
-import { videoApi } from "./videoApi";
+import { api } from "./api.js";
+import { videoApi } from "./videoApi.js";
 
 export const store = configureStore({
   reducer: {
