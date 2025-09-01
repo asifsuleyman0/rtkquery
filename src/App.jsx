@@ -11,18 +11,13 @@ import Applicants from "./pages/Applicants";
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
-  const refetchApplicants = useRef(null); // Applicants səhifəsinin refetch funksiyasını saxlayırıq
 
   if (!isAuth) return <Login onLogin={() => setIsAuth(true)} />;
 
   return (
     <Router>
       <div className="flex h-screen">
-        <Sidebar onRefresh={(path) => {
-          if (path === "/applicants" && refetchApplicants.current) {
-            refetchApplicants.current(); // Sidebar klikləndikdə refetch çağırılır
-          }
-        }} />
+        <Sidebar/>
         <div className="flex-1 overflow-y-auto">
           <Routes>
             <Route path="/" element={<Navigate to="/courses" />} />
@@ -31,7 +26,7 @@ function App() {
             <Route path="/users" element={<Users />} />
             <Route path="/news" element={<News />} />
             <Route path="/videos" element={<Videos />} />
-            <Route path="/applicants" element={<Applicants refetchApplicants={refetchApplicants} />} />
+            <Route path="/applicants" element={<Applicants/>} />
           </Routes>
         </div>
       </div>
