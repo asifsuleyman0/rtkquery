@@ -2,8 +2,10 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const api = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://digacc-5.onrender.com/api" }),
-  tagTypes: ["Course", "Teacher", "User", "News", "Video"],
+  /*baseUrl "/api" olaraq dəyişdirildi. 
+    Bu, sorğuların sənin yeni DigitalOcean serverinə getməsini təmin edir.*/
+  baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  tagTypes: ["Course", "Teacher", "User", "News", "Video", "ContactForm"],
   endpoints: (builder) => ({
     // Courses
     getCourses: builder.query({
@@ -54,7 +56,6 @@ export const api = createApi({
       invalidatesTags: ["User"],
     }),
 
-
     // News
     getNews: builder.query({
       query: () => "/news",
@@ -89,13 +90,11 @@ export const api = createApi({
         url: `/contact-forms/${id}/cv`,
         method: "GET",
       }),
-      // server cavabı `blob` tipində gələcək
-      transformResponse: async (response, meta, arg) => {
+      transformResponse: async (response) => {
         const blob = await response.blob();
         return blob;
       },
     }),
-
   }),
 });
 
@@ -117,5 +116,4 @@ export const {
   useGetContactFormsQuery,
   useGetContactFormQuery,
   useDownloadCvQuery,
-
 } = api;
